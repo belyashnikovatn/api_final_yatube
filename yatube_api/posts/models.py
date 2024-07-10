@@ -48,7 +48,7 @@ class Follow(models.Model):
     following = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='folowers')
     created = models.DateTimeField(
-        'Дата подписки', auto_now_add=True, db_index=True)
+        'Дата подписки', auto_now_add=True)
 
     class Meta:
         constraints = [

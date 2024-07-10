@@ -33,4 +33,4 @@ class GroupSerializer(serializers.ModelSerializer):
 class FollowSerializator(serializers.ModelSerializer):
     class Meta:
         model = Follow
-        fields =('user', 'following')
+        fields = ('id', 'user', 'following')
