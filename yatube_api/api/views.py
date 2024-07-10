@@ -4,11 +4,13 @@ from django.shortcuts import get_object_or_404
 from posts.models import Group, Post, Follow
 
 from rest_framework import viewsets
+from rest_framework.pagination import LimitOffsetPagination
 
 from api.serializers import CommentSerializer, GroupSerializer, PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
+    pagination_class = LimitOffsetPagination
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
