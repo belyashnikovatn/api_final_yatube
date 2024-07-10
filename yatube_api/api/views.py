@@ -1,5 +1,5 @@
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 
 from posts.models import Group, Post, Follow
 
@@ -65,15 +65,20 @@ class CommentViewSet(viewsets.ModelViewSet):
 
 class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                               viewsets.GenericViewSet):
-    queryset = Follow.objects.all()
     serializer_class = FollowSerializator
     permission_classes = (permissions.IsAuthenticated,)
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('following')
+    search_fields = ('following',)
 
-    def create(self, validated_data):
-        Follow.objects.create(user=self.request.user,
-                              following=validated_data)
+    def get_queryset(self):
+        new_queryset = get_list_or_404(Follow, user=self.request.user)
+        return new_queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+    # def create(self, validated_data):
+    #     Follow.objects.create(following=validated_data)
 
 
 class GroupViewSet(viewsets.ReadOnlyModelViewSet):

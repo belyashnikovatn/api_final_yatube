@@ -9,7 +9,7 @@ router.register('posts', PostViewSet)
 router.register(r'posts/(?P<post_id>\d+)/comments', CommentViewSet,
                 basename='posts')
 router.register('groups', GroupViewSet)
-router.register(r'follow', FollowCreateListViewSet)
+router.register(r'follow', FollowCreateListViewSet, basename='follow')
 
 urlpatterns = [
     path('v1/', include(router.urls)),
