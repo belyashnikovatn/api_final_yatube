@@ -5,12 +5,12 @@ from posts.models import Group, Post, Follow
 
 from rest_framework import viewsets
 
-from api.serializers import CommentSerializer, GroupSerializer, PostSerailizer
+from api.serializers import CommentSerializer, GroupSerializer, PostSerializer
 
 
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
-    serializer_class = PostSerailizer
+    serializer_class = PostSerializer
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
