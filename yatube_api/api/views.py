@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from posts.models import Group, Post, Follow
 
 from rest_framework import viewsets
+from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import filters
 
@@ -63,29 +64,35 @@ class CommentViewSet(viewsets.ModelViewSet):
         super(CommentViewSet, self).perform_destroy(instance)
 
 
-class FollowViewSet(viewsets.ModelViewSet):
+# class FollowViewSet(viewsets.ModelViewSet):
+#     queryset = Follow.objects.all()
+#     serializer_class = FollowSerializator
+#     permission_classes = (permissions.IsAuthenticated,)
+#     filter_backends = (filters.SearchFilter,)
+#     search_fields = ('following__username',)
+
+
+class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
+                              viewsets.GenericViewSet):
     queryset = Follow.objects.all()
     serializer_class = FollowSerializator
     permission_classes = (permissions.IsAuthenticated,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
 
-
-class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
-                              viewsets.GenericViewSet):
-    serializer_class = FollowSerializator
-    permission_classes = (permissions.IsAuthenticated,)
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['username', 'email']
-    # filter_backends = (filters.SearchFilter,)
-    # search_fields = ('following', 'username', 'user')
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
 
     def get_queryset(self):
-        new_queryset = get_list_or_404(Follow, user=self.request.user)
-        return new_queryset
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        queryset = Follow.objects.filter(user=self.request.user)
+        # queryset = get_list_or_404(Follow, user=self.request.user)
+        # queryset = self.filter_queryset(Follow, user=self.request.user)
+        username = self.request.query_params.get('username')
+        if username is not None:
+            queryset = queryset.filter(following__username=username)
+        # new_queryset = self.filter_queryset(Follow, user=self.request.user)
+        # new_queryset = self.filter_queryset(Follow.objects.filter(user=self.request.user))
+        return queryset
 
     # def create(self, validated_data):
     #     Follow.objects.create(following=validated_data)
