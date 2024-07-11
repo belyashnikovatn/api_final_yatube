@@ -63,12 +63,22 @@ class CommentViewSet(viewsets.ModelViewSet):
         super(CommentViewSet, self).perform_destroy(instance)
 
 
+class FollowViewSet(viewsets.ModelViewSet):
+    queryset = Follow.objects.all()
+    serializer_class = FollowSerializator
+    permission_classes = (permissions.IsAuthenticated,)
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('following__username',)
+
+
 class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
                               viewsets.GenericViewSet):
     serializer_class = FollowSerializator
     permission_classes = (permissions.IsAuthenticated,)
-    filter_backends = (filters.SearchFilter,)
-    search_fields = ('following',)
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['username', 'email']
+    # filter_backends = (filters.SearchFilter,)
+    # search_fields = ('following', 'username', 'user')
 
     def get_queryset(self):
         new_queryset = get_list_or_404(Follow, user=self.request.user)
