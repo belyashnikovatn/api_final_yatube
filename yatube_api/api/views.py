@@ -1,20 +1,11 @@
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
-from posts.models import Group, Post, Follow
-
-from rest_framework import viewsets
-from rest_framework import mixins
-from rest_framework import filters
-
+from posts.models import Follow, Group, Post
+from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import permissions
 
-
-from api.serializers import (
-    CommentSerializer,
-    GroupSerializer,
-    PostSerializer,
-    FollowSerializator)
+from api.serializers import (CommentSerializer, FollowSerializator,
+                             GroupSerializer, PostSerializer)
 
 
 class PostViewSet(viewsets.ModelViewSet):
