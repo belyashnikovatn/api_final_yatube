@@ -30,11 +30,8 @@ Python + Django REST Framework + аутентификация по JWT-токе�
 | Модель | Нужные методы | Вьюсет | Доп функционал | Разрешения
 | --- | --- | --- | --- | --- |
 | Post | get all, post one, patch one, put one, get one, delete one | ModelViewSet | Пагинация при получении списка (с limit и offset). Брать автора из request.user при записи| IsAuthenticatedOrReadOnly + проверка на авторство при NotReadOnly |
-
 | Comment | get all, post one, patch one, put one, get one, delete one | ModelViewSet | Запись автора из request.user, запись публикации из параметров запроса| IsAuthenticatedOrReadOnly + проверка на авторство при NotReadOnly |
-
 | Group | get all, get one | ReadOnlyModelViewSet | --- | IsAuthenticatedOrReadOnly |
-
 | Follow | get all, post one | ReadOnlyModelViewSet | Поиск по подпискам при получении списка. Брать автора из request.user при записи. Валидаторы: 1. Пользователь может подписаться на другого пользователя 1 раз. 2. Пользователь не может подписаться сам на себя. | IsAuthenticated |
 
 ### Реализация:
