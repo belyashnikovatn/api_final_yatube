@@ -75,19 +75,8 @@ class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
     filter_backends = (filters.SearchFilter,)
     search_fields = ('following__username',)
 
-    # @property
-    # def get_user(self):
-    #     return get_object_or_404(User, self.request.get)
-
     def perform_create(self, serializer):
-        # following = User.objects.get(username=serializer.initial_data.get('following'))
-        username = serializer.initial_data.get('following')
-        following = get_object_or_404(User, username=username)
-        serializer.save(user=self.request.user, following=following)
-
-    # def create(self, request, *args, **kwargs):
-    #     Follow.objects.create(user=self.request.user,
-    #                           following=self.request.query_params.get('following'))
+        serializer.save(user=self.request.user)
 
     def get_queryset(self):
         queryset = Follow.objects.filter(user=self.request.user)
