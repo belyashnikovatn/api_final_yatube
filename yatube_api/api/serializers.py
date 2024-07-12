@@ -37,7 +37,8 @@ class FollowSerializator(serializers.ModelSerializer):
         queryset=User.objects.all()
     )
     user = serializers.StringRelatedField(
-        read_only=True
+        read_only=True,
+        default=serializers.CurrentUserDefault()
     )
 
     class Meta:
@@ -49,3 +50,10 @@ class FollowSerializator(serializers.ModelSerializer):
                 fields=('user', 'following')
             )
         ]
+
+    def create(self, validated_data):
+        if validated_data['following'] == validated_data['user']:
+            raise serializers.ValidationError(
+                'Нельзя оформить подписку на себя!')
+
+        return Follow.objects.create(**validated_data)
