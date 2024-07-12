@@ -1,11 +1,9 @@
-from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, get_list_or_404
 
 from posts.models import Group, Post, Follow
 
 from rest_framework import viewsets
-from rest_framework.response import Response
 from rest_framework import mixins
 from rest_framework import filters
 
@@ -18,9 +16,6 @@ from api.serializers import (
     GroupSerializer,
     PostSerializer,
     FollowSerializator)
-
-
-User = get_user_model()
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -80,9 +75,6 @@ class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
 
     def get_queryset(self):
         queryset = Follow.objects.filter(user=self.request.user)
-        username = self.request.query_params.get('username')
-        if username is not None:
-            queryset = queryset.filter(following__username=username)
         return queryset
 
 
