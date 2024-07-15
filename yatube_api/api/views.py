@@ -5,30 +5,28 @@ from rest_framework.pagination import LimitOffsetPagination
 
 from api.serializers import (CommentSerializer, FollowSerializator,
                              GroupSerializer, PostSerializer)
-from posts.models import Follow, Group, Post, User
+from api.permissions import OwnerOnly, ReadOnly
+from posts.models import Group, Post
 
 
 class PostViewSet(viewsets.ModelViewSet):
     pagination_class = LimitOffsetPagination
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    permission_classes = (OwnerOnly, ReadOnly)
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise PermissionDenied
-        super(PostViewSet, self).perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied
-        super(PostViewSet, self).perform_destroy(instance)
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
+    permission_classes = (OwnerOnly, ReadOnly)
 
     @property
     def get_post(self):
@@ -41,15 +39,10 @@ class CommentViewSet(viewsets.ModelViewSet):
         serializer.save(author=self.request.user,
                         post=self.get_post)
 
-    def perform_update(self, serializer):
-        if serializer.instance.author != self.request.user:
-            raise PermissionDenied
-        super(CommentViewSet, self).perform_update(serializer)
-
-    def perform_destroy(self, instance):
-        if instance.author != self.request.user:
-            raise PermissionDenied
-        super(CommentViewSet, self).perform_destroy(instance)
+    def get_permissions(self):
+        if self.action == 'retrieve':
+            return (ReadOnly(),)
+        return super().get_permissions()
 
 
 class FollowCreateListViewSet(mixins.CreateModelMixin, mixins.ListModelMixin,
